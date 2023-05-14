@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Список студентов</title>
+	
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="public/styles.css"> -->
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+	<div class="w-[1200px] m-4">
+		<div class="flex justify-around">
+			<div class="flex flex-col bg-[#f7eded] rounded-lg p-2">
+				<label for="filter-student" class="text-center">Фильтрация</label>
+				<form action="" id="filter-form">
+					<input id="filter-fio" class="form-control form-control-sm mb-1" type="text" placeholder="Фильтр по ФИО">
+					<input id="filter-department" class="form-control form-control-sm mb-1" type="text" placeholder="Фильтр по факультету">
+					<input id="filter-study" class="form-control form-control-sm mb-1" type="text" placeholder="год начала обучения">
+					<input id="filter-finish-study" class="form-control form-control-sm mb-1" type="text" placeholder="год окончания обучения">
+					<button class="btn btn-primary mt-2">Фильтровать</button>
+					<button class="btn btn-danger ml-1 mt-2">Сброс</button>
+				</form>
+			</div>
+			<form type="submit" class="needs-validation w-[50%] mt-3 ml-2 bg-[#f7eded] rounded-lg p-2" id="students-form">
+				<h4 class="text-center text-xl my-1">Форма заполнения</h4>
+				<div class="form-row">
+					<div class="col-md-4 mb-3">
+						<input type="text" class="form-control" id="input-lastname" placeholder="Фамилия" pattern="[А-Яа-яЁё]{2,}" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<input type="text" class="form-control" id="input-firstName" placeholder="Имя" pattern="[А-Яа-яЁё]{2,}" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<input type="text" class="form-control" id="input-middleName" placeholder="Отчество" pattern="[А-Яа-яЁё]{2,}" required>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="col-md-4 mb-3">
+						<input type="date" class="form-control" id="input-birthDate" placeholder="Дата рождения" min="1900-01-01" max="2030-01-01" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<input type="number" class="form-control" id="input-study" placeholder="Год начала обучения" min="2000" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<input type="text" class="form-control" id="input-department" placeholder="Факультет" pattern="[А-Яа-яЁё]{2,}" required>
+					</div>
+				</div>
+				<div class="flex justify-around">
+					<button class="btn btn-primary">Добавить студента</button>
+					<button id="reset-button" class="btn btn-danger">Очистить поля</button>
+				</div>
+			</form>
+		</div>
+		<div class="mt-5">
+			<h4 class="text-center mb-3">Список студентов</h4>
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th data-column="number">Номер</th>
+						<th data-column="lastName">ФИО студента</th>
+						<th data-column="birthDate">Дата рождения(Возраст)</th>
+						<th data-column="yearOfStudy">Год начала обучения</th>
+						<th data-column="department">Факультет</th>
+					</tr>
+				</thead>
+				<tbody id="students-list">
+					
+				</tbody>
+			</table>
+		</div>
+		</div>
+		</div>
+	
+	</div>
+	<script defer type="module" src="../js/main.js"></script>
+</body>
+</html>
