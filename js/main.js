@@ -28,6 +28,11 @@ function newStudentTR(student, num) {
 		const $birthDateTD = document.createElement('td');
 		const $firstYearTD = document.createElement('td');
 		const $departmentTD = document.createElement('td');
+		const $deleteTD = document.createElement('td')
+		$deleteTD.innerHTML = '<button class="btn btn-danger">Удалить</button>'
+		
+
+
 
 	$numberTD.textContent = num
 	$fioTD.textContent = getFio(student)
@@ -40,6 +45,8 @@ function newStudentTR(student, num) {
 	$studentTR.append($birthDateTD)
 	$studentTR.append($firstYearTD)
 	$studentTR.append($departmentTD)
+	$studentTR.append($deleteTD)
+
 
 	let arrow = document.getElementById('arrow')
 
@@ -130,9 +137,50 @@ studentForm.addEventListener('submit', function(e) {
 
 render()
 
+//Получить список
+async function loadStudentsList() {
+	const response = await fetch('http://localhost:3000/api/students',{
+		method: "GET",
+	});
+	const data = await response.json();
+	console.log(data)
+}
 
+// создать объект студента
+async function createStudentObject() {
+	const response = await fetch('http://localhost:3000/api/students', {
+		method: "POST",
+		headers: {'Content-type': 'application/json'},
+		body: JSON.stringify({
+			name: 'Максим',
+			surname: 'Заверткин',
+			lastname: 'Николаевич',
+			birthday: new Date(1986, 2, 26),
+			studyStart: 2021,
+			faculty: 'Develop'
+		})
+	})
+	const data = await response.json();
+	console.log(data)
+}
 
+//получить объект студента
+async function getStudentObject() {
+	const response = await fetch('http://localhost:3000/api/students/`${id}`',{
+		method: "GET",
+	})
+	const data = await response.json()
+	console.log(data)
+}
 
+//удалить объект студента
+async function deleteStudentObject() {
+	const response = await fetch('http://localhost:3000/api/students/`${id}`',{
+		method: "DELETE",
+	})
+	const data = await response.json()
+	console.log(data)
+}
 
 
 
