@@ -4,21 +4,14 @@ import {
 	getBirthDateData, 
 	getAge, 
 	getSortStudents, 
-	createStudent,
-	filteredArray 
+	filteredArray,
+	clearFiltrationForm,
+	clearCreateForm
 } from "./helpers.js"
-
-const studentsList = [
-	{firstName: 'Максим', lastName: 'Заверткин', middleName: 'Николаевич', birthDate: new Date(1986, 2, 26), yearOfStudy: '2022', department: 'Программирование'},
-	{firstName: 'Анна', lastName: 'Штыкова', middleName: 'Владимировна', birthDate: new Date(1987, 11, 1), yearOfStudy: '2020', department: 'Аналитика'},
-	{firstName: 'Дмитрий', lastName: 'Николашкин', middleName: 'Григорьевич', birthDate: new Date(1985, 8, 23), yearOfStudy: '2018', department: 'Тестирование'},
-	{firstName: 'Иван', lastName: 'Бровкин', middleName: 'Васильевич', birthDate: new Date(1997, 5, 6), yearOfStudy: '2021', department: 'Экономика'},
-	{firstName: 'Светлана', lastName: 'Иванова', middleName: 'Алексеевна', birthDate: new Date(1983, 10, 4), yearOfStudy: '2016', department: 'Финансы'}
-];
 
 const $studentsList = document.getElementById('students-list');
 const $studentsListTH = document.querySelectorAll('.table-bordered th');
-let column = 'lastName';
+let column = 'lastname';
 let direction = true;
 
 function newStudentTR(student, num) {
@@ -37,8 +30,8 @@ function newStudentTR(student, num) {
 	$numberTD.textContent = num
 	$fioTD.textContent = getFio(student)
 	$birthDateTD.textContent = `${getBirthDateData(student)} (${getAge(student)})`
-	$firstYearTD.textContent = `${student.yearOfStudy} (${getStudyPeriod(student)})`
-	$departmentTD.textContent = student.department
+	$firstYearTD.textContent = `${student.studyStart} (${getStudyPeriod(student)})`
+	$departmentTD.textContent = student.faculty
 
 	$studentTR.append($numberTD)
 	$studentTR.append($fioTD)
@@ -47,14 +40,25 @@ function newStudentTR(student, num) {
 	$studentTR.append($departmentTD)
 	$studentTR.append($deleteTD)
 
-
-	let arrow = document.getElementById('arrow')
+	$deleteTD.addEventListener('click', function() {
+		if(!confirm('Вы уверены?')) {
+			return
+		}
+		fetch(`http://localhost:3000/api/students/${student.id}`,{
+			method: "DELETE",
+		})
+		render()
+	})
 
 	return $studentTR
 }
 
-function render() {
-		
+async function render() {
+	const response = await fetch('http://localhost:3000/api/students')
+	const studentsList = await response.json()
+
+	console.log(studentsList)
+	
 	let studentsListCopy = getSortStudents(studentsList, column, direction);
 	$studentsList.innerHTML = ''
 
@@ -66,18 +70,17 @@ function render() {
 	let newArr = [...studentsListCopy].map(item => {
 		const result = {
 		...item,
-		finishStudy: `${Number(item.yearOfStudy) + 4}`,
-		fio: `${item.lastName} ${item.firstName} ${item.middleName}`
+		finishStudy: `${Number(item.studyStart) + 4}`,
+		fio: `${item.surname} ${item.name} ${item.lastname}`
 		};
 
 		return result
 	})
 
 	if(fioValue !== '') newArr = filteredArray(newArr, 'fio', fioValue)
-	if(departmentValue !== '') newArr = filteredArray(newArr, 'department', departmentValue)
-	if(startStudy !== '') newArr = filteredArray(newArr, 'yearOfStudy', startStudy)
+	if(departmentValue !== '') newArr = filteredArray(newArr, 'faculty', departmentValue)
+	if(startStudy !== '') newArr = filteredArray(newArr, 'studyStart', startStudy)
 	if(finishStudy !== '') newArr = filteredArray(newArr, 'finishStudy',finishStudy)
-
 
 	newArr.forEach((student, i) => {
 			`${$studentsList.append(newStudentTR(student, i + 1))}` 
@@ -87,33 +90,24 @@ function render() {
 $studentsListTH.forEach(item => {
 	item.addEventListener('click', function() {
 		column = this.dataset.column;
+		console.log(column)
 		direction = !direction;
 		render();
 	})
 });
 
+
+//Очистка форм
 document.getElementById('filter-form').addEventListener('submit',function(e) {
 	e.preventDefault();
 	render()
 })
 
-document.querySelector('.btn-danger').addEventListener('click', function() {
-	document.getElementById('filter-fio').value = '',
-	document.getElementById('filter-department').value = '',
-	document.getElementById('filter-study').value = '',
-	document.getElementById('filter-finish-study').value = ''
-})
+//Очистка формы фильтрации
+clearFiltrationForm()
 
-document.getElementById('reset-button').addEventListener('click', function() {
-	document.getElementById('input-lastname').value = '',
-		document.getElementById('input-firstName').value = '',
-		document.getElementById('input-middleName').value = '',
-		new Date(document.getElementById('input-birthDate').value = ''),
-		document.getElementById('input-study').value = '',
-		document.getElementById('input-department').value = ''
-
-		render()
-})
+//Очистка формы заполнения
+clearCreateForm()
 
 const studentForm = document.getElementById('students-form')
 const inputLastname = document.getElementById('input-lastname')
@@ -122,65 +116,31 @@ const inputMiddlename = document.getElementById('input-middleName')
 const inputStudy = document.getElementById('input-study')
 const inputDepartment = document.getElementById('input-department')
 
-studentForm.addEventListener('submit', function(e) {
+studentForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
-	studentsList.push(createStudent(
-		inputLastname.value.trim(),
-		inputFirsttname.value,
-		inputMiddlename.value,
-		new Date(document.getElementById('input-birthDate').value),
-		inputStudy.value,
-		inputDepartment.value,
-	))
-	render()
-})
-
-render()
-
-//Получить список
-async function loadStudentsList() {
-	const response = await fetch('http://localhost:3000/api/students',{
-		method: "GET",
-	});
-	const data = await response.json();
-	console.log(data)
-}
-
-// создать объект студента
-async function createStudentObject() {
 	const response = await fetch('http://localhost:3000/api/students', {
 		method: "POST",
 		headers: {'Content-type': 'application/json'},
 		body: JSON.stringify({
-			name: 'Максим',
-			surname: 'Заверткин',
-			lastname: 'Николаевич',
-			birthday: new Date(1986, 2, 26),
-			studyStart: 2021,
-			faculty: 'Develop'
+			name: inputFirsttname.value,
+			surname: inputLastname.value.trim(),
+			lastname: inputMiddlename.value,
+			birthday: new Date(document.getElementById('input-birthDate').value),
+			studyStart: inputStudy.value,
+			faculty: inputDepartment.value,
 		})
 	})
-	const data = await response.json();
-	console.log(data)
-}
 
-//получить объект студента
-async function getStudentObject() {
-	const response = await fetch('http://localhost:3000/api/students/`${id}`',{
-		method: "GET",
-	})
-	const data = await response.json()
-	console.log(data)
-}
+	inputFirsttname.value=''
+	inputLastname.value=''
+	inputMiddlename.value=''
+	new Date(document.getElementById('input-birthDate').value='')
+	inputStudy.value=''
+	inputDepartment.value=''
+	
+	const student = await response.json();
+	render()
+	
+})
 
-//удалить объект студента
-async function deleteStudentObject() {
-	const response = await fetch('http://localhost:3000/api/students/`${id}`',{
-		method: "DELETE",
-	})
-	const data = await response.json()
-	console.log(data)
-}
-
-
-
+render()

@@ -4,17 +4,18 @@ export {
 	getBirthDateData, 
 	getAge, 
 	getSortStudents, 
-	createStudent, 
-	filteredArray
+	filteredArray,
+	clearFiltrationForm,
+	clearCreateForm
 };
 	
 	function getFio(obj) {
-		let { lastName, firstName, middleName } = obj;
-		return [lastName, firstName, middleName].filter((v) => v).join(' ');
+		let { lastName, name, surname } = obj;
+		return [lastName, name, surname].filter((v) => v).join(' ');
 	}
 	
 	function getStudyPeriod(obj) {
-		let currentTime = new Date().getFullYear() - obj.yearOfStudy
+		let currentTime = new Date().getFullYear() - obj.studyStart
 		if(currentTime > 4) {
 			return 'Закончил'
 		}
@@ -22,9 +23,9 @@ export {
 	}
 	
 	function getBirthDateData(obj) {
-		let yyyy = obj.birthDate.getFullYear();
-		let mm = obj.birthDate.getMonth() + 1;
-		let dd = obj.birthDate.getDate();
+		let yyyy = new Date(obj.birthday).getFullYear();
+		let mm = new Date(obj.birthday).getMonth() + 1;
+		let dd = new Date(obj.birthday).getDate();
 	
 		if(mm < 10) mm = '0' + mm;
 		if(dd < 10) dd = '0' + dd;
@@ -33,7 +34,7 @@ export {
 	}
 	
 	function getAge(obj) {
-		let age = Math.floor((new Date() - new Date(obj.birthDate).getTime()) / 3.15576e10)
+		let age = Math.floor((new Date() - new Date(obj.birthday).getTime()) / 3.15576e10)
 		let lastNumberAge = String(age).split('').at(-1)
 		
 		if(/[1]/.test(+lastNumberAge)) {
@@ -66,7 +67,23 @@ export {
 		return result;
 	}
 
-	function createStudent ( lastName, firstName, middleName, birthDate, yearOfStudy, department ) {
-		return { lastName, firstName, middleName, birthDate: new Date(birthDate), yearOfStudy, department }
+	function clearFiltrationForm() {
+		document.querySelector('.btn-danger').addEventListener('click', function() {
+			document.getElementById('filter-fio').value = '',
+			document.getElementById('filter-department').value = '',
+			document.getElementById('filter-study').value = '',
+			document.getElementById('filter-finish-study').value = ''
+		})
+	}
+
+	function clearCreateForm() {
+		document.getElementById('reset-button').addEventListener('click', function() {
+			document.getElementById('input-lastname').value = '',
+				document.getElementById('input-firstName').value = '',
+				document.getElementById('input-middleName').value = '',
+				new Date(document.getElementById('input-birthday').value = ''),
+				document.getElementById('input-study').value = '',
+				document.getElementById('input-department').value = ''
+		})
 	}
 

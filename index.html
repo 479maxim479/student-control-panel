@@ -50,7 +50,7 @@
 					</div>
 				</div>
 				<div class="flex justify-around">
-					<button class="btn btn-primary">Добавить студента</button>
+					<button id="add-button" class="btn btn-primary">Добавить студента</button>
 					<button id="reset-button" class="btn btn-danger">Очистить поля</button>
 				</div>
 			</form>
@@ -61,11 +61,11 @@
 				<thead>
 					<tr>
 						<th data-column="number">Номер</th>
-						<th data-column="lastName">ФИО студента</th>
-						<th data-column="birthDate">Дата рождения(Возраст)</th>
-						<th data-column="yearOfStudy">Год начала обучения</th>
-						<th data-column="department">Факультет</th>
-						<th data-column="department">Удаление</th>
+						<th data-column="surname">ФИО студента</th>
+						<th data-column="birthday">Дата рождения(Возраст)</th>
+						<th data-column="studyStart">Год начала обучения</th>
+						<th data-column="faculty">Факультет</th>
+						<th >Удаление</th>
 					</tr>
 				</thead>
 				<tbody id="students-list">
