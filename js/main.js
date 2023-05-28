@@ -41,12 +41,13 @@ function newStudentTR(student, num) {
 	$studentTR.append($deleteTD)
 
 	$deleteTD.addEventListener('click', function() {
-		if(!confirm('Вы уверены?')) {
-			return
-		}
+		// if(!confirm('Вы уверены?')) {
+		// 	return
+		// }
 		fetch(`http://localhost:3000/api/students/${student.id}`,{
 			method: "DELETE",
 		})
+		$studentTR.remove()
 		render()
 	})
 
@@ -90,7 +91,6 @@ async function render() {
 $studentsListTH.forEach(item => {
 	item.addEventListener('click', function() {
 		column = this.dataset.column;
-		console.log(column)
 		direction = !direction;
 		render();
 	})
